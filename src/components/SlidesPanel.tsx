@@ -20,57 +20,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useTheme } from "@/context/ThemeContext";
+import { useLesson } from "@/context/LessonContext";
+import { LESSONS_DATA } from "@/data/lessons";
 
 // ─── Data ────────────────────────────────────────────────
-const SLIDES = [
-  {
-    id: 1,
-    title: "Слайд 1",
-    subtitle: "Введение и обзор",
-    content:
-      "Добро пожаловать на курс по дизайну интерфейсов! В этом модуле мы рассмотрим основные принципы построения макетов.",
-    bullets: [
-      "Что такое UI/UX дизайн",
-      "Основные инструменты",
-      "Принципы визуальной иерархии",
-      "Подготовка рабочего пространства",
-    ],
-  },
-  {
-    id: 2,
-    title: "Слайд 2",
-    subtitle: "Основные принципы",
-    content:
-      "Ключевые принципы дизайна, которые помогут создавать эффективные интерфейсы.",
-    bullets: [
-      "Контраст и акценты",
-      "Сетки и выравнивание",
-      "Правило близости",
-      "Повторяемость элементов",
-    ],
-  },
-  {
-    id: 3,
-    title: "Слайд 3",
-    subtitle: "Практические примеры",
-    content: "Разберём реальные примеры и попрактикуемся.",
-    bullets: [
-      "Анализ популярных приложений",
-      "Создание своего макета",
-      "Обратная связь от AI",
-      "Итоговое задание",
-    ],
-  },
-];
-
-const LESSONS = [
-  { id: 1, title: "Основы макетов", locked: false },
-  { id: 2, title: "Типографика", locked: false },
-  { id: 3, title: "Цветовая теория", locked: true },
-  { id: 4, title: "Компоненты UI", locked: true },
-  { id: 5, title: "Адаптивный дизайн", locked: true },
-];
-
 const METRICS = [
   { label: "Общий прогресс", value: 68, icon: TrendingUp, colorHex: "#3B82F6" },
   { label: "Точность ответов", value: 75, icon: Target, colorHex: "#22C55E" },
@@ -80,19 +33,23 @@ const METRICS = [
 
 // ─── Slide Modal Content ─────────────────────────────────
 const SlideModalContent = ({
-  slide,
+  slides,
+  activeSlide,
   onPrev,
   onNext,
   hasPrev,
   hasNext,
 }: {
-  slide: (typeof SLIDES)[0];
+  slides: { id: number; title: string; subtitle: string; content: string; bullets: string[] }[];
+  activeSlide: number;
   onPrev: () => void;
   onNext: () => void;
   hasPrev: boolean;
   hasNext: boolean;
 }) => {
   const { colors } = useTheme();
+  const slide = slides[activeSlide];
+
   return (
     <div className="flex flex-col h-full" style={{ backgroundColor: colors.bg, color: colors.text }}>
       <div
@@ -115,7 +72,7 @@ const SlideModalContent = ({
           className="ml-auto text-xs px-2.5 py-1 rounded-full"
           style={{ backgroundColor: colors.buttonHover, color: colors.textSecondary }}
         >
-          {slide.id} / {SLIDES.length}
+          {activeSlide + 1} / {slides.length}
         </div>
       </div>
 
@@ -174,12 +131,12 @@ const SlideModalContent = ({
           <ChevronLeft className="w-4 h-4" /> Назад
         </button>
         <div className="flex gap-2">
-          {SLIDES.map((s) => (
+          {slides.map((_, idx) => (
             <div
-              key={s.id}
+              key={idx}
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: s.id === slide.id ? colors.accent : colors.textSecondary + "50",
+                backgroundColor: idx === activeSlide ? colors.accent : colors.textSecondary + "50",
               }}
             />
           ))}
@@ -200,8 +157,20 @@ const SlideModalContent = ({
 // ─── Slides Section ──────────────────────────────────────
 const SlidesSection = () => {
   const { colors } = useTheme();
+  const { activeLessonId } = useLesson();
+  const lesson = LESSONS_DATA.find((l) => l.id === activeLessonId);
   const [activeSlide, setActiveSlide] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!lesson || lesson.slides.length === 0) {
+    return (
+      <div className="h-full flex items-center justify-center px-4">
+        <p className="text-xs" style={{ color: colors.textSecondary }}>
+          Слайды будут доступны позже
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full overflow-y-auto px-4 py-3 space-y-2.5">
@@ -211,7 +180,7 @@ const SlidesSection = () => {
       >
         Слайды
       </h3>
-      {SLIDES.map((slide, index) => (
+      {lesson.slides.map((slide, index) => (
         <button
           key={slide.id}
           onClick={() => {
@@ -255,11 +224,12 @@ const SlidesSection = () => {
           aria-describedby={undefined}
         >
           <SlideModalContent
-            slide={SLIDES[activeSlide]}
+            slides={lesson.slides}
+            activeSlide={activeSlide}
             onPrev={() => setActiveSlide((prev) => Math.max(0, prev - 1))}
-            onNext={() => setActiveSlide((prev) => Math.min(SLIDES.length - 1, prev + 1))}
+            onNext={() => setActiveSlide((prev) => Math.min(lesson.slides.length - 1, prev + 1))}
             hasPrev={activeSlide > 0}
-            hasNext={activeSlide < SLIDES.length - 1}
+            hasNext={activeSlide < lesson.slides.length - 1}
           />
         </DialogContent>
       </Dialog>
@@ -362,10 +332,10 @@ const MetricsSection = () => {
   );
 };
 
-// ─── Lessons Section ─────────────────────────────────────
+// ─── Lessons Section (connected to context) ──────────────
 const LessonsSection = () => {
   const { colors } = useTheme();
-  const [activeLesson, setActiveLesson] = useState(1);
+  const { activeLessonId, setActiveLessonId } = useLesson();
 
   return (
     <div className="h-full overflow-y-auto px-4 py-3">
@@ -376,17 +346,17 @@ const LessonsSection = () => {
         Уроки
       </h3>
       <div className="space-y-1">
-        {LESSONS.map((lesson) => (
+        {LESSONS_DATA.map((lesson) => (
           <button
             key={lesson.id}
             disabled={lesson.locked}
-            onClick={() => !lesson.locked && setActiveLesson(lesson.id)}
+            onClick={() => !lesson.locked && setActiveLessonId(lesson.id)}
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors text-xs"
             style={{
               backgroundColor:
                 lesson.locked
                   ? "transparent"
-                  : activeLesson === lesson.id
+                  : activeLessonId === lesson.id
                     ? colors.buttonHover
                     : "transparent",
               color: lesson.locked ? colors.textSecondary : colors.text,
@@ -394,12 +364,12 @@ const LessonsSection = () => {
               cursor: lesson.locked ? "not-allowed" : "pointer",
             }}
             onMouseEnter={(e) => {
-              if (!lesson.locked && activeLesson !== lesson.id) {
+              if (!lesson.locked && activeLessonId !== lesson.id) {
                 e.currentTarget.style.backgroundColor = colors.buttonHover + "80";
               }
             }}
             onMouseLeave={(e) => {
-              if (!lesson.locked && activeLesson !== lesson.id) {
+              if (!lesson.locked && activeLessonId !== lesson.id) {
                 e.currentTarget.style.backgroundColor = "transparent";
               }
             }}
