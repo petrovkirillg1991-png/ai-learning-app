@@ -1,4 +1,4 @@
-// src/components/ChatPanel.tsx
+﻿// src/components/ChatPanel.tsx
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowUp, ChevronDown, Sparkles, Zap, Brain, Square, Paperclip } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";

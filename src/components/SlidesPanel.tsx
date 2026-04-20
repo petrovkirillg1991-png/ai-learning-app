@@ -23,15 +23,13 @@ import { useTheme } from "@/context/ThemeContext";
 import { useLesson } from "@/context/LessonContext";
 import { LESSONS_DATA } from "@/data/lessons";
 
-// ─── Data ────────────────────────────────────────────────
 const METRICS = [
-  { label: "Общий прогресс", value: 68, icon: TrendingUp, colorHex: "#3B82F6" },
+  { label: "бщий прогресс", value: 68, icon: TrendingUp, colorHex: "#3B82F6" },
   { label: "Точность ответов", value: 75, icon: Target, colorHex: "#22C55E" },
   { label: "Скорость", value: 82, icon: Clock, colorHex: "#3B82F6" },
-  { label: "Креативность", value: 60, icon: Star, colorHex: "#EAB308" },
+  { label: "реативность", value: 60, icon: Star, colorHex: "#EAB308" },
 ];
 
-// ─── Slide Modal Content ─────────────────────────────────
 const SlideModalContent = ({
   slides,
   activeSlide,
@@ -87,7 +85,7 @@ const SlideModalContent = ({
               style={{ color: colors.textSecondary + "50" }}
             />
             <span className="text-xs" style={{ color: colors.textSecondary }}>
-              Иллюстрация к слайду
+              ллюстрация к слайду
             </span>
           </div>
         </div>
@@ -97,7 +95,7 @@ const SlideModalContent = ({
           </p>
           <div className="space-y-2">
             <h3 className="font-heading text-sm font-medium" style={{ color: colors.text }}>
-              Ключевые темы:
+              лючевые темы:
             </h3>
             <ul className="space-y-2">
               {slide.bullets.map((b, i) => (
@@ -128,7 +126,7 @@ const SlideModalContent = ({
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           style={{ color: colors.textSecondary }}
         >
-          <ChevronLeft className="w-4 h-4" /> Назад
+          <ChevronLeft className="w-4 h-4" /> азад
         </button>
         <div className="flex gap-2">
           {slides.map((_, idx) => (
@@ -147,14 +145,13 @@ const SlideModalContent = ({
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           style={{ color: colors.accent }}
         >
-          Далее <ChevronRight className="w-4 h-4" />
+          алее <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
   );
 };
 
-// ─── Slides Section ──────────────────────────────────────
 const SlidesSection = () => {
   const { colors } = useTheme();
   const { activeLessonId } = useLesson();
@@ -190,7 +187,7 @@ const SlidesSection = () => {
           className="w-full rounded-xl p-3 text-left transition-all duration-200 group"
           style={{
             backgroundColor: colors.inputBg,
-            border: `1px solid ${colors.border}`,
+            border: "1px solid " + colors.border,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = colors.buttonHover;
@@ -219,7 +216,7 @@ const SlidesSection = () => {
           className="max-w-5xl w-[90vw] h-[50vh] flex flex-col p-0"
           style={{
             backgroundColor: colors.bg,
-            border: `1px solid ${colors.border}`,
+            border: "1px solid " + colors.border,
           }}
           aria-describedby={undefined}
         >
@@ -237,7 +234,6 @@ const SlidesSection = () => {
   );
 };
 
-// ─── Metrics Section ─────────────────────────────────────
 const MetricsContent = () => {
   const { colors } = useTheme();
   return (
@@ -261,23 +257,23 @@ const MetricsContent = () => {
           >
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${m.value}%`, backgroundColor: colors.accent }}
+              style={{ width: m.value + "%", backgroundColor: colors.accent }}
             />
           </div>
         </div>
       ))}
       <div
         className="p-2.5 rounded-lg"
-        style={{ backgroundColor: colors.inputBg, border: `1px solid ${colors.border}` }}
+        style={{ backgroundColor: colors.inputBg, border: "1px solid " + colors.border }}
       >
         <div className="flex items-center gap-1.5 mb-1">
           <Star className="w-3.5 h-3.5 text-yellow-400" />
           <span className="text-xs font-medium" style={{ color: colors.text }}>
-            Оценка учителя
+            ценка учителя
           </span>
         </div>
         <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-          Хорошая работа! Рекомендую уделить больше внимания типографике.
+          Хорошая работа! екомендую уделить больше внимания типографике.
         </p>
       </div>
     </div>
@@ -296,7 +292,7 @@ const MetricsSection = () => {
           className="text-xs font-semibold uppercase tracking-wide"
           style={{ color: colors.textSecondary }}
         >
-          Метрики
+          етрики
         </span>
         <Dialog>
           <DialogTrigger asChild>
@@ -312,13 +308,13 @@ const MetricsSection = () => {
             className="max-w-2xl h-[70vh] flex flex-col p-0 overflow-y-auto"
             style={{
               backgroundColor: colors.bg,
-              border: `1px solid ${colors.border}`,
+              border: "1px solid " + colors.border,
             }}
             aria-describedby={undefined}
           >
             <DialogHeader className="px-6 py-4 border-b" style={{ borderColor: colors.border }}>
               <DialogTitle className="font-heading" style={{ color: colors.text }}>
-                Подробные метрики
+                одробные метрики
               </DialogTitle>
             </DialogHeader>
             <MetricsContent />
@@ -332,7 +328,6 @@ const MetricsSection = () => {
   );
 };
 
-// ─── Lessons Section (connected to context) ──────────────
 const LessonsSection = () => {
   const { colors } = useTheme();
   const { activeLessonId, setActiveLessonId } = useLesson();
@@ -343,7 +338,7 @@ const LessonsSection = () => {
         className="text-xs font-semibold uppercase tracking-wide mb-2"
         style={{ color: colors.textSecondary }}
       >
-        Уроки
+        роки
       </h3>
       <div className="space-y-1">
         {LESSONS_DATA.map((lesson) => (
@@ -387,7 +382,6 @@ const LessonsSection = () => {
   );
 };
 
-// ─── Resizable Divider ───────────────────────────────────
 const Divider = ({ onMouseDown }: { onMouseDown: (e: React.MouseEvent) => void }) => {
   const { colors } = useTheme();
   const [hovered, setHovered] = useState(false);
@@ -408,7 +402,6 @@ const Divider = ({ onMouseDown }: { onMouseDown: (e: React.MouseEvent) => void }
   );
 };
 
-// ─── Slides Panel (3 resizable sections) ─────────────────
 const SlidesPanel = () => {
   const { colors } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -464,15 +457,15 @@ const SlidesPanel = () => {
       className="flex flex-col h-full w-full overflow-hidden"
       style={{ backgroundColor: colors.bg }}
     >
-      <div className="overflow-hidden" style={{ height: `${topRatio * 100}%` }}>
+      <div className="overflow-hidden" style={{ height: topRatio * 100 + "%" }}>
         <SlidesSection />
       </div>
       <Divider onMouseDown={onMouseDown("top")} />
-      <div className="overflow-hidden" style={{ height: `${midRatio * 100}%` }}>
+      <div className="overflow-hidden" style={{ height: midRatio * 100 + "%" }}>
         <MetricsSection />
       </div>
       <Divider onMouseDown={onMouseDown("bottom")} />
-      <div className="overflow-hidden" style={{ height: `${bottomRatio * 100}%` }}>
+      <div className="overflow-hidden" style={{ height: bottomRatio * 100 + "%" }}>
         <LessonsSection />
       </div>
     </div>
